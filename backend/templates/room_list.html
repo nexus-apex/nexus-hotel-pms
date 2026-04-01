@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Rooms | NexusHotelPMS{% endblock %}
+{% block page_title %}Rooms{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search rooms...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Room Type</option>
+      <option value="single" {% if status_filter == 'single' %}selected{% endif %}>Single</option>
+      <option value="double" {% if status_filter == 'double' %}selected{% endif %}>Double</option>
+      <option value="suite" {% if status_filter == 'suite' %}selected{% endif %}>Suite</option>
+      <option value="deluxe" {% if status_filter == 'deluxe' %}selected{% endif %}>Deluxe</option>
+      <option value="presidential" {% if status_filter == 'presidential' %}selected{% endif %}>Presidential</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/rooms/create/" class="btn btn-primary">+ New Room</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Room Number</th><th>Room Type</th><th>Floor</th><th>Rate Per Night</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/rooms/{{ r.pk }}/edit/"><strong>{{ r.room_number }}</strong></a></td>
+        <td><span class="badge badge-blue">{{ r.get_room_type_display }}</span></td>
+        <td>{{ r.floor|default:"-" }}</td>
+        <td>{{ r.rate_per_night|floatformat:2 }}</td>
+        <td><span class="badge badge-blue">{{ r.get_status_display }}</span></td>
+        <td class="actions">
+          <a href="/rooms/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/rooms/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No rooms found.</p>
+    <a href="/rooms/create/" class="btn btn-primary" style="margin-top:1rem">Create Room</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
