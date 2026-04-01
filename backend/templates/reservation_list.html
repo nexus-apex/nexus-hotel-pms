@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Reservations | NexusHotelPMS{% endblock %}
+{% block page_title %}Reservations{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search reservations...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+      <option value="checked_in" {% if status_filter == 'checked_in' %}selected{% endif %}>Checked In</option>
+      <option value="checked_out" {% if status_filter == 'checked_out' %}selected{% endif %}>Checked Out</option>
+      <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/reservations/create/" class="btn btn-primary">+ New Reservation</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Guest Name</th><th>Guest Email</th><th>Room Number</th><th>Check In</th><th>Check Out</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/reservations/{{ r.pk }}/edit/"><strong>{{ r.guest_name }}</strong></a></td>
+        <td style="color:var(--muted)">{{ r.guest_email|default:"-" }}</td>
+        <td>{{ r.room_number|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.check_in|date:"M d, Y"|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.check_out|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/reservations/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/reservations/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No reservations found.</p>
+    <a href="/reservations/create/" class="btn btn-primary" style="margin-top:1rem">Create Reservation</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
