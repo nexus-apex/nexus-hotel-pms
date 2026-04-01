@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}Edit{% else %}New{% endif %} Guest | NexusHotelPMS{% endblock %}
+{% block page_title %}{% if editing %}Edit Guest{% else %}New Guest{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:750px">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ record.name|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ record.email|default:'' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="text" name="phone" value="{{ record.phone|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Id Type</label>
+        <select name="id_type">
+          <option value="passport" {% if record.id_type == 'passport' %}selected{% endif %}>Passport</option>
+          <option value="aadhar" {% if record.id_type == 'aadhar' %}selected{% endif %}>Aadhar</option>
+          <option value="drivinglicense" {% if record.id_type == 'drivinglicense' %}selected{% endif %}>DrivingLicense</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Id Number</label>
+        <input type="text" name="id_number" value="{{ record.id_number|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Visits</label>
+        <input type="number" name="visits" value="{{ record.visits|default:'0' }}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Total Spent</label>
+        <input type="number" step="0.01" name="total_spent" value="{{ record.total_spent|default:'0' }}">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="checkbox-wrapper">
+        <input type="checkbox" name="vip" id="id_vip" {% if record.vip %}checked{% endif %}>
+        <label for="id_vip" style="margin-bottom:0">Vip</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nationality</label>
+        <input type="text" name="nationality" value="{{ record.nationality|default:'' }}">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+      <button type="submit" class="btn btn-primary">{% if editing %}Update{% else %}Create{% endif %} Guest</button>
+      <a href="/guests/" class="btn" style="background:var(--border);color:var(--text)">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
